@@ -24,6 +24,23 @@ This document outlines the UI coding standards for the WineCellar project.
 <MyInput v-model="name" />
 ```
 
+## Page Styling Defaults
+
+All new pages should follow these default styling rules unless specifically defined otherwise:
+
+- **Background color:** `#261e1c`
+- **Text color:** `white`
+
+### Example
+
+```vue
+<template>
+  <div class="min-h-screen bg-[#261e1c] text-white">
+    <!-- Page content -->
+  </div>
+</template>
+```
+
 ## Date Formatting
 
 Use **date-fns** for all date formatting operations.
