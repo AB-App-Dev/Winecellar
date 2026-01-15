@@ -32,6 +32,9 @@ npx prisma studio    # Open Prisma Studio GUI
 - **Prisma** with PostgreSQL for database
 - **TypeScript** throughout
 
+### Coding Standards
+- **ALWAYS use Composition API with `<script setup>`** - No exceptions. Never use Options API.
+
 ### Project Structure (Nuxt conventions)
 - `app/` - Main application code (Nuxt 4 default)
 - `prisma/schema.prisma` - Database schema (client generates to `app/generated/prisma`)
@@ -39,7 +42,7 @@ npx prisma studio    # Open Prisma Studio GUI
 
 ### Data Model (from winecellar_specs.md)
 - **Wine**: Core entity with art, taste, year, price, grower relation, availability status
-- **WineGrower**: Wine producers (one-to-many with wines)
+- **Wineries**: Wine producers (one-to-many with wines)
 - **Supplier**: Independent supplier management
 - **User**: Admin authentication (predefined accounts only, no registration)
 - **Favorite**: Server-synced guest favorites using `guestKey` (anonymous identifier)

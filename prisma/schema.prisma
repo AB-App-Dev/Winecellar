@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client"
   output   = "../app/generated/prisma"
@@ -11,4 +8,156 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+// Predefined lookup enums
+enum WineArt {
+  RED
+  WHITE
+  ROSE
+  SPARKLING
+  DESSERT
+}
+
+enum WineTaste {
+  DRY
+  SEMI_DRY
+  SEMI_SWEET
+  SWEET
+}
+
+// Wine entity - core entity for guest/admin sections
+model Wine {
+  id                String    @id @default(uuid())
+  name              String
+  growerId          String
+  grower            Winery    @relation(fields: [growerId], references: [id])
+  art               WineArt
+  taste             WineTaste
+  year              Int
+  barrelType        String?
+  alcoholPercentage Decimal?  @db.Decimal(4, 2)
+  amount            String?
+  wineVariety       String?
+  land              String
+  region            String?
+  price             Decimal   @db.Decimal(10, 2)
+  bottlesAmount     Int
+  availableAtYear   Int?
+  imageUrl          String?
+  description       String?   @db.Text
+  hiddenForGuests   Boolean   @default(false)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  favorites Favorite[]
+
+  @@index([price])
+  @@index([year])
+  @@index([art])
+  @@index([taste])
+  @@index([land])
+  @@index([hiddenForGuests])
+  @@index([growerId])
+}
+
+// Winery entity - wine producers/growers
+model Winery {
+  id        String   @id @default(uuid())
+  name      String
+  address   String?
+  post      String?
+  city      String?
+  land      String?
+  phone     String?
+  email     String?
+  website   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  wines Wine[]
+}
+
+// Supplier entity - independent supplier management
+model Supplier {
+  id        String   @id @default(uuid())
+  name      String
+  address   String?
+  post      String?
+  city      String?
+  land      String?
+  phone     String?
+  email     String?
+  website   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// better-auth: User entity - predefined admin users (no registration)
+model user {
+  id            String    @id
+  name          String
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  role          String    @default("admin")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  sessions session[]
+  accounts account[]
+}
+
+// better-auth: Session entity
+model session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      user     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// better-auth: Account entity (for OAuth providers)
+model account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  user      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+}
+
+// better-auth: Verification entity (for email verification, password reset)
+model verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+// Favorite entity - server-synced guest favorites
+model Favorite {
+  id        String   @id @default(uuid())
+  guestKey  String
+  wineId    String
+  wine      Wine     @relation(fields: [wineId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([guestKey, wineId])
+  @@index([guestKey])
 }

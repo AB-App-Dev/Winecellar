@@ -32,7 +32,7 @@ Guests must be able to browse a list of wines with:
 - **Displayed fields (per wine):**
   - Wine image
   - Wine name
-  - Wine grower
+  - Winery
   - Year (production year)
   - Taste (e.g., dry, sweet)
   - Barrel type
