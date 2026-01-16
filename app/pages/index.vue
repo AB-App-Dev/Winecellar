@@ -11,37 +11,26 @@ const layoutView = ref<'grid' | 'list'>('grid')
 
 <template>
   <div>
-
-      <!-- Layout Toggle & Theme Options -->
-      <div class="flex items-center justify-between">
-        <div class="flex items-center space-x-2">
-          <button
-            :class="[
-              'p-2 rounded',
-              layoutView === 'grid' ? 'bg-gray-200 dark:bg-gray-700' : 'hover:bg-gray-100 dark:hover:bg-gray-800'
-            ]"
-            @click="layoutView = 'grid'"
-          >
-            Grid
-          </button>
-          <button
-            :class="[
-              'p-2 rounded',
-              layoutView === 'list' ? 'bg-gray-200 dark:bg-gray-700' : 'hover:bg-gray-100 dark:hover:bg-gray-800'
-            ]"
-            @click="layoutView = 'list'"
-          >
-            List
-          </button>
-        </div>
-
-        <NuxtLink
-          to="/admin/login"
-          class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        >
-          Admin Login
-        </NuxtLink>
-      </div>
-    
+    <!-- Layout Toggle & Admin Link -->
+    <div class="flex items-center justify-between">
+      <UButtonGroup>
+        <UButton
+          :variant="layoutView === 'grid' ? 'solid' : 'ghost'"
+          color="primary"
+          icon="i-heroicons-squares-2x2"
+          aria-label="Grid view"
+          :ui="{ base: 'cursor-pointer' }"
+          @click="layoutView = 'grid'"
+        />
+        <UButton
+          :variant="layoutView === 'list' ? 'solid' : 'ghost'"
+          color="primary"
+          icon="i-heroicons-list-bullet"
+          aria-label="List view"
+          :ui="{ base: 'cursor-pointer' }"
+          @click="layoutView = 'list'"
+        />
+      </UButtonGroup>
+    </div>
   </div>
 </template>

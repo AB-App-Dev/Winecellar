@@ -1,2 +1,78 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
+
+/* Montserrat Thin */
+@font-face {
+  font-family: 'Montserrat';
+  src: url('~/assets/fonts/Montserrat-Thin.woff2') format('woff2'),
+       url('~/assets/fonts/Montserrat-Thin.woff') format('woff');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Montserrat ExtraLight */
+@font-face {
+  font-family: 'Montserrat';
+  src: url('~/assets/fonts/Montserrat-ExtraLight.woff2') format('woff2'),
+       url('~/assets/fonts/Montserrat-ExtraLight.woff') format('woff');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Montserrat Light */
+@font-face {
+  font-family: 'Montserrat';
+  src: url('~/assets/fonts/Montserrat-Light.woff2') format('woff2'),
+       url('~/assets/fonts/Montserrat-Light.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Montserrat Regular */
+@font-face {
+  font-family: 'Montserrat';
+  src: url('~/assets/fonts/Montserrat-Regular.woff2') format('woff2'),
+       url('~/assets/fonts/Montserrat-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Poiret One */
+@font-face {
+  font-family: 'Poiret One';
+  src: url('~/assets/fonts/PoiretOne-Regular.woff2') format('woff2'),
+       url('~/assets/fonts/PoiretOne-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --font-montserrat: 'Montserrat', sans-serif;
+  --font-poiret: 'Poiret One', cursive;
+}
+
+:root {
+  --ui-radius: 0rem;
+}
+
+.dark {
+  --ui-bg: var(--ui-color-neutral-900);
+  --ui-bg-muted: var(--ui-color-neutral-800);
+  --ui-bg-elevated: var(--ui-color-neutral-700);
+  --ui-bg-accented: var(--ui-color-neutral-600);
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  background-color: var(--ui-bg);
+  color: var(--ui-text);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Poiret One', cursive;
+}

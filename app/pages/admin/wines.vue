@@ -7,120 +7,157 @@ definePageMeta({
   middleware: 'auth'
 })
 
+const filterArt = ref('')
+const filterCountry = ref('')
+const filterTaste = ref('')
 const sortField = ref('year')
-const sortDirection = ref<'asc' | 'desc'>('desc')
+
+const artOptions = [
+  { label: 'All', value: '' },
+  { label: 'Red', value: 'red' },
+  { label: 'White', value: 'white' },
+  { label: 'Rosé', value: 'rose' },
+  { label: 'Sparkling', value: 'sparkling' },
+  { label: 'Dessert', value: 'dessert' },
+]
+
+const countryOptions = [
+  { label: 'All', value: '' },
+]
+
+const tasteOptions = [
+  { label: 'All', value: '' },
+  { label: 'Dry', value: 'dry' },
+  { label: 'Semi-dry', value: 'semi-dry' },
+  { label: 'Semi-sweet', value: 'semi-sweet' },
+  { label: 'Sweet', value: 'sweet' },
+]
+
+const sortOptions = [
+  { label: 'Production Year', value: 'year' },
+  { label: 'Name', value: 'name' },
+  { label: 'Price', value: 'price' },
+  { label: 'Bottles Amount', value: 'bottlesAmount' },
+]
+
+const columns = [
+  { id: 'name', header: 'Wine' },
+  { id: 'art', header: 'Art' },
+  { id: 'year', header: 'Year' },
+  { id: 'price', header: 'Price' },
+  { id: 'bottlesAmount', header: 'Bottles' },
+  { id: 'status', header: 'Status' },
+  { id: 'actions', header: 'Actions' },
+]
+
+const wines = ref<any[]>([])
 </script>
 
 <template>
   <div>
     <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+      <h1 class="text-2xl font-bold text-highlighted">
         Wines
       </h1>
-      <NuxtLink
+      <UButton
         to="/admin/wines/new"
-        class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+        color="primary"
+        icon="i-lucide-plus"
+        :ui="{ base: 'cursor-pointer' }"
       >
         Add Wine
-      </NuxtLink>
+      </UButton>
     </div>
 
     <!-- Filters Section -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 mb-6">
+    <UCard class="mb-6">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <!-- Wine Art Filter -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Wine Art
-          </label>
-          <select class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
-            <option value="">All</option>
-            <option value="red">Red</option>
-            <option value="white">White</option>
-            <option value="rose">Rose</option>
-            <option value="sparkling">Sparkling</option>
-            <option value="dessert">Dessert</option>
-          </select>
-        </div>
+        <UFormField label="Wine Art">
+          <USelect
+            v-model="filterArt"
+            :items="artOptions"
+            class="w-full"
+          />
+        </UFormField>
 
-        <!-- Land Filter -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Country
-          </label>
-          <select class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
-            <option value="">All</option>
-          </select>
-        </div>
+        <UFormField label="Country">
+          <USelect
+            v-model="filterCountry"
+            :items="countryOptions"
+            class="w-full"
+          />
+        </UFormField>
 
-        <!-- Taste Filter -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Taste
-          </label>
-          <select class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
-            <option value="">All</option>
-            <option value="dry">Dry</option>
-            <option value="semi-dry">Semi-dry</option>
-            <option value="semi-sweet">Semi-sweet</option>
-            <option value="sweet">Sweet</option>
-          </select>
-        </div>
+        <UFormField label="Taste">
+          <USelect
+            v-model="filterTaste"
+            :items="tasteOptions"
+            class="w-full"
+          />
+        </UFormField>
 
-        <!-- Sort -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Sort by
-          </label>
-          <select
+        <UFormField label="Sort by">
+          <USelect
             v-model="sortField"
-            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-          >
-            <option value="year">Production Year</option>
-            <option value="name">Name</option>
-            <option value="price">Price</option>
-            <option value="bottlesAmount">Bottles Amount</option>
-          </select>
-        </div>
+            :items="sortOptions"
+            class="w-full"
+          />
+        </UFormField>
       </div>
-    </div>
+    </UCard>
 
     <!-- Wines Table -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
-      <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-        <thead class="bg-gray-50 dark:bg-gray-900">
-          <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              Wine
-            </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              Art
-            </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              Year
-            </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              Price
-            </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              Bottles
-            </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              Status
-            </th>
-            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              Actions
-            </th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-          <tr>
-            <td colspan="7" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
-              No wines added yet. Click "Add Wine" to create one.
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <UCard :ui="{ body: 'p-0' }">
+      <UTable :columns="columns" :data="wines">
+        <template #empty>
+          <div class="flex flex-col items-center justify-center py-12 text-muted">
+            <UIcon name="i-lucide-wine-off" class="size-12 mb-4 opacity-50" />
+            <p>No wines added yet.</p>
+            <UButton
+              to="/admin/wines/new"
+              color="primary"
+              variant="ghost"
+              class="mt-4"
+              :ui="{ base: 'cursor-pointer' }"
+            >
+              Add your first wine
+            </UButton>
+          </div>
+        </template>
+
+        <template #actions="{ row }">
+          <div class="flex justify-end gap-2">
+            <UTooltip text="Edit">
+              <UButton
+                :to="`/admin/wines/${row.original.id}/edit`"
+                color="neutral"
+                variant="ghost"
+                icon="i-lucide-pencil"
+                size="sm"
+                :ui="{ base: 'cursor-pointer' }"
+              />
+            </UTooltip>
+            <UTooltip text="Delete">
+              <UButton
+                color="error"
+                variant="ghost"
+                icon="i-lucide-trash-2"
+                size="sm"
+                :ui="{ base: 'cursor-pointer' }"
+              />
+            </UTooltip>
+          </div>
+        </template>
+
+        <template #status="{ row }">
+          <UBadge
+            :color="row.original.hiddenForGuests ? 'warning' : 'success'"
+            variant="subtle"
+          >
+            {{ row.original.hiddenForGuests ? 'Hidden' : 'Visible' }}
+          </UBadge>
+        </template>
+      </UTable>
+    </UCard>
   </div>
 </template>

@@ -12,7 +12,12 @@
       "Bash(npm run db:seed:*)",
       "Bash(npm install:*)",
       "Bash(curl:*)",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "Bash(claude mcp add:*)",
+      "mcp__nuxt-ui-remote__get-component",
+      "mcp__nuxt-ui-remote__get-documentation-page",
+      "mcp__nuxt-ui-remote__list-getting-started-guides",
+      "mcp__nuxt-ui-remote__get-component-metadata"
     ]
   }
 }

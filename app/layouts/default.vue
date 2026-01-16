@@ -1,46 +1,69 @@
 <script setup lang="ts">
-// Default layout for guest section
+
+const route = useRoute()
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+  <UPage class="bg-default">
     <!-- Guest Header -->
-    <header class="bg-white dark:bg-gray-800 shadow-sm">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16">
-          <NuxtLink to="/" class="text-xl font-bold text-gray-900 dark:text-white">
-            WineCellar
-          </NuxtLink>
-          <nav class="flex items-center space-x-4">
-            <NuxtLink
-              to="/"
-              class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
-            >
-              Wines
-            </NuxtLink>
-            <NuxtLink
-              to="/favorites"
-              class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
-            >
-              Favorites
-            </NuxtLink>
-          </nav>
-        </div>
-      </div>
-    </header>
+    <UHeader
+      :ui="{
+        root: 'fixed top-0 left-0 right-0 z-50 bg-default/10 backdrop-blur-sm'
+      }"
+    >
+    <template #title>
+      <img src="/logo.png" alt="WineCellar" class="h-10 w-auto" />
+    </template>
+
+    <template #right>
+      <UTooltip text="Theme">
+        <UColorModeButton
+          :ui="{
+            base: 'bg-transparent hover:bg-transparent text-white hover:text-primary cursor-pointer'
+          }"
+        />
+      </UTooltip>
+
+      <UTooltip text="Login">
+        <UButton
+          variant="ghost"
+          to="/admin/login"
+          icon="i-lucide-log-in"
+          aria-label="Login"
+          :ui="{
+            base: 'bg-transparent hover:bg-transparent text-white hover:text-primary'
+          }"
+        />
+      </UTooltip>
+    </template>
+  </UHeader>
+
+  <UPageHero
+    title="Jede Flasche erzählt ihre eigene Geschichte"
+    description="sorgfältig ausgewählt für anspruchsvolle Genießer"
+    :ui="{
+      root: 'bg-cover bg-center bg-no-repeat before:absolute before:inset-0 before:bg-black/60',
+      container: 'relative z-10',
+      title: 'text-white',
+      description: 'text-white'
+    }"
+    :style="{ backgroundImage: 'url(/hero_bg.jpg)' }"
+  />
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <slot />
+    <main class="py-8">
+      <UContainer>
+        <slot />
+      </UContainer>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <p class="text-center text-gray-500 dark:text-gray-400 text-sm">
+    <footer class="border-t border-default">
+      <UContainer>
+        <p class="text-center text-muted text-sm py-4">
           &copy; {{ new Date().getFullYear() }} WineCellar
         </p>
-      </div>
+      </UContainer>
     </footer>
-  </div>
+  </UPage>
 </template>

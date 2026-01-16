@@ -19,7 +19,7 @@ async function handleSubmit() {
   try {
     const { error: resetError } = await forgetPassword({
       email: email.value,
-      redirectTo: '/admin/reset-password',
+      redirectTo: '/admin/login',
     })
 
     if (resetError) {
@@ -36,62 +36,74 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-    <div class="max-w-md w-full space-y-8 p-8 bg-white dark:bg-gray-800 rounded-lg shadow">
-      <div>
-        <h2 class="text-center text-3xl font-bold text-gray-900 dark:text-white">
-          Reset Password
-        </h2>
-        <p class="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-          Enter your email address and we'll send you a link to reset your password.
-        </p>
-      </div>
+  <div class="min-h-screen flex items-center justify-center bg-default">
+    <UCard class="max-w-md w-full">
+      <template #header>
+        <div class="text-center">
+          <h2 class="text-3xl font-bold text-highlighted">
+            Reset Password
+          </h2>
+          <p class="mt-2 text-sm text-muted">
+            Enter your email address and we'll send you a link to reset your password.
+          </p>
+        </div>
+      </template>
 
       <div v-if="isSubmitted" class="text-center space-y-4">
-        <div class="bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 p-4 rounded">
-          If an account exists with that email, you will receive a password reset link shortly.
-        </div>
+        <UAlert
+          color="success"
+          variant="subtle"
+          title="If an account exists with that email, you will receive a password reset link shortly."
+          icon="i-lucide-circle-check"
+        />
         <NuxtLink
           to="/admin/login"
-          class="inline-block text-indigo-600 dark:text-indigo-400 hover:underline"
+          class="text-sm text-primary hover:text-primary-600 inline-flex items-center gap-1"
         >
+          <UIcon name="i-lucide-arrow-left" />
           Back to login
         </NuxtLink>
       </div>
 
-      <form v-else class="mt-8 space-y-6" @submit.prevent="handleSubmit">
-        <div v-if="error" class="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded text-sm">
-          {{ error }}
-        </div>
+      <form v-else class="space-y-6" @submit.prevent="handleSubmit">
+        <UAlert
+          v-if="error"
+          color="error"
+          variant="subtle"
+          :title="error"
+          icon="i-lucide-circle-x"
+        />
 
-        <div>
-          <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Email address
-          </label>
-          <input
-            id="email"
+        <UFormField label="Email address" class="w-full">
+          <UInput
             v-model="email"
             type="email"
+            placeholder="Enter your email"
+            icon="i-lucide-mail"
             required
-            class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            placeholder="admin@example.com"
+            class="w-full"
           />
-        </div>
+        </UFormField>
 
-        <button
+        <UButton
           type="submit"
-          :disabled="isSubmitting"
-          class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          color="primary"
+          block
+          :loading="isSubmitting"
+          :ui="{ base: 'cursor-pointer' }"
         >
           {{ isSubmitting ? 'Sending...' : 'Send reset link' }}
-        </button>
+        </UButton>
       </form>
 
-      <div v-if="!isSubmitted" class="text-center">
-        <NuxtLink to="/admin/login" class="text-sm text-indigo-600 dark:text-indigo-400 hover:underline">
-          Back to login
-        </NuxtLink>
-      </div>
-    </div>
+      <template v-if="!isSubmitted" #footer>
+        <div class="text-center">
+          <NuxtLink to="/admin/login" class="text-sm text-primary hover:text-primary-600 inline-flex items-center gap-1">
+            <UIcon name="i-lucide-arrow-left" />
+            Back to login
+          </NuxtLink>
+        </div>
+      </template>
+    </UCard>
   </div>
 </template>
