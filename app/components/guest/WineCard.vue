@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Wine } from '~/types'
+import { getCountryLabel } from '~/components/CountrySelect.vue'
 
 const props = defineProps<{
   wine: Wine
@@ -121,7 +122,7 @@ function handleToggleFavorite() {
         </div>
         <div class="flex justify-between">
           <span>Country:</span>
-          <span>{{ wine.land }}</span>
+          <span>{{ getCountryLabel(wine.land) }}</span>
         </div>
         <div v-if="wine.region" class="flex justify-between">
           <span>Region:</span>

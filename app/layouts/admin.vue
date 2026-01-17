@@ -1,22 +1,16 @@
 <script setup lang="ts">
+import type { NavigationMenuItem } from '@nuxt/ui'
+
 // Admin layout with sidebar navigation
 
 const authStore = useAuthStore()
-const route = useRoute()
 
-const navItems = [
-  { label: 'Dashboard', to: '/admin', icon: 'i-lucide-layout-dashboard' },
+const navItems: NavigationMenuItem[] = [
+  { label: 'Dashboard', to: '/admin', icon: 'i-lucide-layout-dashboard', exact: true },
   { label: 'Wines', to: '/admin/wines', icon: 'i-lucide-wine' },
   { label: 'Wineries', to: '/admin/wineries', icon: 'i-lucide-warehouse' },
   { label: 'Suppliers', to: '/admin/suppliers', icon: 'i-lucide-truck' },
 ]
-
-const isActive = (path: string) => {
-  if (path === '/admin') {
-    return route.path === '/admin'
-  }
-  return route.path.startsWith(path)
-}
 </script>
 
 <template>
@@ -33,41 +27,15 @@ const isActive = (path: string) => {
         </div>
 
         <!-- Navigation -->
-        <nav class="flex-1 px-3 py-6 space-y-1">
-          <UButton
-            v-for="item in navItems"
-            :key="item.to"
-            :to="item.to"
-            variant="ghost"
-            block
-            :ui="{
-              base: `cursor-pointer justify-start ${isActive(item.to) ? 'bg-primary text-white hover:bg-primary-600' : 'text-muted hover:bg-accented hover:text-highlighted'}`
-            }"
-          >
-            <template #leading>
-              <UIcon :name="item.icon" class="size-5" />
-            </template>
-            {{ item.label }}
-          </UButton>
+        <nav class="flex-1 px-3 py-6">
+          <UNavigationMenu
+            :items="navItems"
+            orientation="vertical"
+            highlight
+            class="w-full mb-4"
+            :ui="{ item: 'mb-3' }"
+          />
         </nav>
-
-        <!-- User Info & Logout -->
-        <div class="px-3 py-4 border-t border-default">
-          <div v-if="authStore.user" class="mb-3 px-4 flex items-center gap-2 text-sm text-muted">
-            <UIcon name="i-lucide-user" class="size-4" />
-            {{ authStore.user.name }}
-          </div>
-          <UButton
-            block
-            color="neutral"
-            variant="ghost"
-            icon="i-lucide-log-out"
-            :ui="{ base: 'cursor-pointer justify-start' }"
-            @click="authStore.logout"
-          >
-            Logout
-          </UButton>
-        </div>
       </div>
     </aside>
 
@@ -86,15 +54,31 @@ const isActive = (path: string) => {
               }"
             />
           </UTooltip>
-          <UTooltip text="View site">
-            <UButton
-              to="/"
-              color="neutral"
-              variant="ghost"
-              icon="i-lucide-external-link"
-              :ui="{ base: 'cursor-pointer' }"
-            />
-          </UTooltip>
+          <UPopover
+            :content="{
+              align: 'end',
+              side: 'bottom',
+              sideOffset: 8
+            }"
+          >
+            <UAvatar icon="i-lucide-circle-user-round" class="text-lg cursor-pointer" />
+            <template #content>
+              <div class="p-2 min-w-48">
+                <div v-if="authStore.user" class="px-2 py-1.5 text-sm font-medium text-highlighted">
+                  <UAvatar icon="i-lucide-circle-user-round" class="text-lg" /> {{ authStore.user.name }}
+                </div>
+                <USeparator class="my-2" />
+                <ULink
+                  class="flex items-center gap-2 w-full px-2 py-1.5 text-sm text-muted hover:text-highlighted cursor-pointer focus:outline-none focus-visible:outline-none"
+                  :inactive-class="'no-underline'"
+                  @click="authStore.logout"
+                >
+                  <UIcon name="i-lucide-circle-arrow-out-up-right" />
+                  Logout
+                </ULink>
+              </div>
+            </template>
+          </UPopover>
         </div>
       </header>
 

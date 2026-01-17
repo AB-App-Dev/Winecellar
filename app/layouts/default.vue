@@ -28,7 +28,7 @@ const route = useRoute()
         <UButton
           variant="ghost"
           to="/admin/login"
-          icon="i-lucide-log-in"
+          icon="i-lucide-user"
           aria-label="Login"
           :ui="{
             base: 'bg-transparent hover:bg-transparent text-white hover:text-primary'

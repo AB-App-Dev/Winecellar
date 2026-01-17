@@ -30,15 +30,16 @@ enum WineTaste {
 model Wine {
   id                String    @id @default(uuid())
   name              String
-  growerId          String
-  grower            Winery    @relation(fields: [growerId], references: [id])
+  wineryId          String?
+  winery            Winery?   @relation(fields: [wineryId], references: [id])
   art               WineArt
   taste             WineTaste
   year              Int
   barrelType        String?
-  alcoholPercentage Decimal?  @db.Decimal(4, 2)
+  alcoholPercentage Decimal?  @db.Decimal(5, 2)
   amount            String?
   wineVariety       String?
+  varieties         String?
   land              String
   region            String?
   price             Decimal   @db.Decimal(10, 2)
@@ -58,7 +59,7 @@ model Wine {
   @@index([taste])
   @@index([land])
   @@index([hiddenForGuests])
-  @@index([growerId])
+  @@index([wineryId])
 }
 
 // Winery entity - wine producers/growers

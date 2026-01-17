@@ -17,7 +17,11 @@
       "mcp__nuxt-ui-remote__get-component",
       "mcp__nuxt-ui-remote__get-documentation-page",
       "mcp__nuxt-ui-remote__list-getting-started-guides",
-      "mcp__nuxt-ui-remote__get-component-metadata"
+      "mcp__nuxt-ui-remote__get-component-metadata",
+      "mcp__nuxt-ui-remote__list-components",
+      "WebFetch(domain:localhost)",
+      "mcp__ide__getDiagnostics",
+      "mcp__nuxt-ui-remote__search-components-by-category"
     ]
   }
 }
