@@ -21,7 +21,13 @@
       "mcp__nuxt-ui-remote__list-components",
       "WebFetch(domain:localhost)",
       "mcp__ide__getDiagnostics",
-      "mcp__nuxt-ui-remote__search-components-by-category"
+      "mcp__nuxt-ui-remote__search-components-by-category",
+      "Bash(npx neonctl@latest init:*)",
+      "mcp__plugin_neon-plugin_neon__list_projects",
+      "mcp__plugin_neon-plugin_neon__get_database_tables",
+      "mcp__plugin_neon-plugin_neon__describe_table_schema",
+      "mcp__plugin_neon-plugin_neon__run_sql",
+      "mcp__plugin_neon-plugin_neon__run_sql_transaction"
     ]
   }
 }

@@ -47,6 +47,15 @@ npx prisma studio    # Open Prisma Studio GUI
 - `prisma/schema.prisma` - Database schema (client generates to `app/generated/prisma`)
 - `.env` - Environment variables (includes `DATABASE_URL`)
 
+### File Location Shortcuts
+When user mentions:
+- **"pages"** → look in `app/pages/admin/`
+- **"startpage"** → look in `app/pages/index.vue`
+- **"layouts"** → look in `app/layouts/`
+- **"components"** → look in `app/components/`
+- **"admin modals"** → look in `app/components/admin/modals/`
+- **"prisma"** → look in `prisma/schema.prisma`
+
 ### Data Model (from winecellar_specs.md)
 - **Wine**: Core entity with art, taste, year, price, grower relation, availability status
 - **Wineries**: Wine producers (one-to-many with wines)

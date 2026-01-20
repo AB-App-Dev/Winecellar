@@ -37,10 +37,15 @@ const tasteLabels: Record<string, string> = {
 }
 
 const isNewWineModalOpen = ref(false)
+const isEditWineModalOpen = ref(false)
+const isDeleteWineModalOpen = ref(false)
+const editingWine = ref<any>(null)
+const deletingWine = ref<any>(null)
 const expandedRows = ref<Set<string>>(new Set())
 
 const wines = ref<any[]>([])
 const isLoading = ref(false)
+const toast = useToast()
 
 function toggleRow(id: string) {
   if (expandedRows.value.has(id)) {
@@ -82,18 +87,34 @@ onMounted(() => {
   fetchWines()
 })
 
-async function handleSaveNewWine(form: any) {
-  await $fetch('/api/wines', {
-    method: 'POST',
-    body: form,
-  })
-  isNewWineModalOpen.value = false
+async function handleWineCreated() {
   await fetchWines()
 }
 
-async function deleteWine(id: string) {
-  if (!confirm('Möchten Sie diesen Wein wirklich löschen?')) return
-  await $fetch(`/api/wines/${id}`, { method: 'DELETE' })
+function openDeleteModal(wine: any) {
+  deletingWine.value = wine
+  isDeleteWineModalOpen.value = true
+}
+
+async function handleDeleteConfirmed() {
+  if (!deletingWine.value) return
+  const wineName = deletingWine.value.name
+  await $fetch(`/api/wines/${deletingWine.value.id}`, { method: 'DELETE' })
+  deletingWine.value = null
+  toast.add({
+    title: 'Wein gelöscht',
+    description: `"${wineName}" wurde erfolgreich gelöscht.`,
+    color: 'success',
+  })
+  await fetchWines()
+}
+
+function openEditModal(wine: any) {
+  editingWine.value = wine
+  isEditWineModalOpen.value = true
+}
+
+async function handleWineUpdated() {
   await fetchWines()
 }
 </script>
@@ -209,12 +230,12 @@ async function deleteWine(id: string) {
               <td class="p-3" @click.stop>
                 <div class="flex justify-end gap-2">
                   <UButton
-                    :to="`/admin/wines/${wine.id}/edit`"
                     color="primary"
                     variant="ghost"
                     icon="i-lucide-pencil"
                     size="sm"
                     :ui="{ base: 'cursor-pointer' }"
+                    @click="openEditModal(wine)"
                   />
                   <UButton
                     color="error"
@@ -222,7 +243,7 @@ async function deleteWine(id: string) {
                     icon="i-lucide-trash-2"
                     size="sm"
                     :ui="{ base: 'cursor-pointer' }"
-                    @click="deleteWine(wine.id)"
+                    @click="openDeleteModal(wine)"
                   />
                 </div>
               </td>
@@ -295,7 +316,19 @@ async function deleteWine(id: string) {
 
     <AdminModalsNewWineModal
       v-model:open="isNewWineModalOpen"
-      @save="handleSaveNewWine"
+      @created="handleWineCreated"
+    />
+
+    <AdminModalsEditWineModal
+      v-model:open="isEditWineModalOpen"
+      :wine="editingWine"
+      @updated="handleWineUpdated"
+    />
+
+    <AdminModalsDeleteWineModal
+      v-model:open="isDeleteWineModalOpen"
+      :wine-name="deletingWine?.name"
+      @confirmed="handleDeleteConfirmed"
     />
   </div>
 </template>

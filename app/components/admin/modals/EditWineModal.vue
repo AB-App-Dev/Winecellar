@@ -1,8 +1,14 @@
 <script setup lang="ts">
+import type { Wine } from '~/generated/prisma'
+
+const props = defineProps<{
+  wine: Wine | null
+}>()
+
 const open = defineModel<boolean>('open', { default: false })
 
 const emit = defineEmits<{
-  created: []
+  updated: []
 }>()
 
 const toast = useToast()
@@ -218,53 +224,55 @@ watch(imageFile, async (file) => {
   if (file) {
     await uploadImage(file)
   }
-  else {
-    form.imageUrl = ''
-  }
 })
 
-function resetForm() {
-  form.name = ''
-  form.wineryId = ''
-  form.art = undefined
-  form.taste = undefined
-  form.year = new Date().getFullYear()
-  form.barrelType = ''
-  form.alcoholPercentage = undefined
-  form.amount = ''
-  form.wineVariety = ''
-  form.varieties = ''
-  form.land = ''
-  form.region = ''
-  form.price = undefined
-  form.bottlesAmount = undefined
-  form.availableAtYear = undefined
-  form.imageUrl = ''
-  form.description = ''
-  form.hiddenForGuests = false
+function populateForm(wine: Wine) {
+  form.name = wine.name
+  form.wineryId = wine.wineryId || ''
+  form.art = wine.art
+  form.taste = wine.taste
+  form.year = wine.year
+  form.barrelType = wine.barrelType || ''
+  form.alcoholPercentage = wine.alcoholPercentage
+  form.amount = wine.amount || ''
+  form.wineVariety = wine.wineVariety || ''
+  form.varieties = wine.varieties || ''
+  form.land = wine.land
+  form.region = wine.region || ''
+  form.price = wine.price
+  form.bottlesAmount = wine.bottlesAmount
+  form.availableAtYear = wine.availableAtYear || undefined
+  form.imageUrl = wine.imageUrl || ''
+  form.description = wine.description || ''
+  form.hiddenForGuests = wine.hiddenForGuests
   imageFile.value = null
   uploadError.value = null
   clearErrors()
 }
 
+watch(() => props.wine, (wine) => {
+  if (wine) {
+    populateForm(wine)
+  }
+}, { immediate: true })
+
 function close() {
   open.value = false
-  resetForm()
 }
 
 async function save() {
-  if (!validate()) {
+  if (!props.wine || !validate()) {
     return
   }
 
   isSaving.value = true
 
   try {
-    await $fetch('/api/wines', {
-      method: 'POST',
+    await $fetch(`/api/wines/${props.wine.id}`, {
+      method: 'PUT',
       body: {
         name: form.name,
-        wineryId: form.wineryId,
+        wineryId: form.wineryId || undefined,
         art: form.art,
         taste: form.taste,
         year: form.year,
@@ -277,7 +285,7 @@ async function save() {
         region: form.region || undefined,
         price: form.price,
         bottlesAmount: form.bottlesAmount,
-        availableAtYear: form.availableAtYear,
+        availableAtYear: form.availableAtYear || undefined,
         imageUrl: form.imageUrl || undefined,
         description: form.description || undefined,
         hiddenForGuests: form.hiddenForGuests,
@@ -285,16 +293,16 @@ async function save() {
     })
 
     toast.add({
-      title: 'Wein erstellt',
-      description: `"${form.name}" wurde erfolgreich hinzugefügt.`,
+      title: 'Wein aktualisiert',
+      description: `"${form.name}" wurde erfolgreich gespeichert.`,
       color: 'success',
     })
 
-    emit('created')
+    emit('updated')
     close()
   }
   catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Fehler beim Erstellen des Weins'
+    const message = error instanceof Error ? error.message : 'Fehler beim Aktualisieren des Weins'
     toast.add({
       title: 'Fehler',
       description: message,
@@ -313,7 +321,7 @@ async function save() {
       <UCard class="w-200 max-w-full">
         <template #header>
           <div class="flex items-center justify-between">
-            <h3 class="text-lg font-semibold">Neuen Wein hinzufügen</h3>
+            <h3 class="text-lg font-semibold">Wein bearbeiten</h3>
             <UButton
               color="neutral"
               variant="ghost"
@@ -364,7 +372,7 @@ async function save() {
           </div>
 
           <!-- Year & Production -->
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">            
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <UFormField label="Ausbau">
               <UInput
                 v-model="form.barrelType"

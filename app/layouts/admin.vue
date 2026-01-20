@@ -7,9 +7,9 @@ const authStore = useAuthStore()
 
 const navItems: NavigationMenuItem[] = [
   { label: 'Dashboard', to: '/admin', icon: 'i-lucide-layout-dashboard', exact: true },
-  { label: 'Wines', to: '/admin/wines', icon: 'i-lucide-wine' },
-  { label: 'Wineries', to: '/admin/wineries', icon: 'i-lucide-warehouse' },
-  { label: 'Suppliers', to: '/admin/suppliers', icon: 'i-lucide-truck' },
+  { label: 'Weine', to: '/admin/wines', icon: 'i-lucide-wine' },
+  { label: 'Weingüter', to: '/admin/wineries', icon: 'i-lucide-warehouse' },
+  { label: 'Lieferanten', to: '/admin/suppliers', icon: 'i-lucide-truck' },
 ]
 </script>
 
