@@ -17,11 +17,11 @@ export const useFavoritesStore = defineStore('favorites', {
   }),
 
   getters: {
-    favoriteWineIds: (state): number[] => {
+    favoriteWineIds: (state): string[] => {
       return state.favorites.map(f => f.wineId)
     },
 
-    isFavorite: (state) => (wineId: number): boolean => {
+    isFavorite: (state) => (wineId: string): boolean => {
       return state.favorites.some(f => f.wineId === wineId)
     }
   },
@@ -43,60 +43,80 @@ export const useFavoritesStore = defineStore('favorites', {
         this.initGuestKey()
       }
 
+      if (!this.guestKey) return
+
       this.isLoading = true
       this.error = null
       try {
-        // TODO: Implement actual API call
-        // const response = await $fetch('/api/favorites', {
-        //   headers: { 'X-Guest-Key': this.guestKey! }
-        // })
-        // this.favorites = response
+        const response = await $fetch<Favorite[]>('/api/favorites', {
+          headers: { 'X-Guest-Key': this.guestKey }
+        })
+        this.favorites = response
       } catch (e) {
         this.error = 'Failed to fetch favorites'
+        console.error('Failed to fetch favorites:', e)
       } finally {
         this.isLoading = false
       }
     },
 
-    async addFavorite(wineId: number) {
+    async addFavorite(wineId: string) {
       if (!this.guestKey) {
         this.initGuestKey()
       }
 
-      try {
-        // TODO: Implement actual API call
-        // await $fetch('/api/favorites', {
-        //   method: 'POST',
-        //   headers: { 'X-Guest-Key': this.guestKey! },
-        //   body: { wineId }
-        // })
+      if (!this.guestKey) return
 
-        // Optimistic update
-        this.favorites.push({
-          id: Date.now(),
-          guestKey: this.guestKey!,
-          wineId,
-          createdAt: new Date()
+      // Optimistic update
+      const tempFavorite: Favorite = {
+        id: crypto.randomUUID(),
+        guestKey: this.guestKey,
+        wineId,
+        createdAt: new Date()
+      }
+      this.favorites.push(tempFavorite)
+
+      try {
+        const response = await $fetch<Favorite>('/api/favorites', {
+          method: 'POST',
+          headers: { 'X-Guest-Key': this.guestKey },
+          body: { wineId }
         })
+
+        // Replace temp favorite with actual response
+        const index = this.favorites.findIndex(f => f.id === tempFavorite.id)
+        if (index !== -1) {
+          this.favorites[index] = response
+        }
       } catch (e) {
+        // Rollback on error
+        this.favorites = this.favorites.filter(f => f.id !== tempFavorite.id)
         this.error = 'Failed to add favorite'
+        console.error('Failed to add favorite:', e)
       }
     },
 
-    async removeFavorite(wineId: number) {
+    async removeFavorite(wineId: string) {
       if (!this.guestKey) return
 
-      try {
-        // TODO: Implement actual API call
-        // await $fetch(`/api/favorites/${wineId}`, {
-        //   method: 'DELETE',
-        //   headers: { 'X-Guest-Key': this.guestKey }
-        // })
+      // Store for rollback
+      const removedFavorite = this.favorites.find(f => f.wineId === wineId)
 
-        // Optimistic update
-        this.favorites = this.favorites.filter(f => f.wineId !== wineId)
+      // Optimistic update
+      this.favorites = this.favorites.filter(f => f.wineId !== wineId)
+
+      try {
+        await $fetch(`/api/favorites/${wineId}`, {
+          method: 'DELETE',
+          headers: { 'X-Guest-Key': this.guestKey }
+        })
       } catch (e) {
+        // Rollback on error
+        if (removedFavorite) {
+          this.favorites.push(removedFavorite)
+        }
         this.error = 'Failed to remove favorite'
+        console.error('Failed to remove favorite:', e)
       }
     },
 

@@ -6,10 +6,10 @@ export type WineTaste = 'dry' | 'semi-dry' | 'semi-sweet' | 'sweet'
 
 // Wine entity
 export interface Wine {
-  id: number
+  id: string
   name: string
-  growerId: number
-  grower?: WineGrower
+  wineryId?: string
+  winery?: WineGrower
   art: WineArt
   taste: WineTaste
   year: number
@@ -17,6 +17,7 @@ export interface Wine {
   alcoholPercentage?: number
   amount?: string
   wineVariety?: string
+  varieties?: string
   land: string
   region?: string
   price: number
@@ -31,7 +32,7 @@ export interface Wine {
 
 // Wine Grower (Winery) entity
 export interface WineGrower {
-  id: number
+  id: string
   name: string
   address?: string
   post?: string
@@ -47,7 +48,7 @@ export interface WineGrower {
 
 // Supplier entity
 export interface Supplier {
-  id: number
+  id: string
   name: string
   address?: string
   post?: string
@@ -74,9 +75,9 @@ export interface User {
 
 // Favorite entity
 export interface Favorite {
-  id: number
+  id: string
   guestKey: string
-  wineId: number
+  wineId: string
   wine?: Wine
   createdAt: Date
   updatedAt?: Date

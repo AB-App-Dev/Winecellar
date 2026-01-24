@@ -1,22 +1,21 @@
 <script setup lang="ts">
+import { tasteOptions, getTasteLabel } from '~/utils/wineOptions'
+
 const model = defineModel<string>()
 
 defineProps<{
   placeholder?: string
 }>()
 
-const tasteOptions = [
-  { label: 'Trocken', value: 'DRY' },
-  { label: 'Halbtrocken', value: 'SEMI_DRY' },
-  { label: 'Lieblich', value: 'SEMI_SWEET' },
-  { label: 'Süß', value: 'SWEET' },
-]
+// Re-export for external use
+defineExpose({ getTasteLabel })
 </script>
 
 <template>
   <USelect
     v-model="model"
     :items="tasteOptions"
+    :placeholder="placeholder"
     class="w-full"
   />
 </template>

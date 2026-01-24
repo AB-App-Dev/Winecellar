@@ -19,6 +19,7 @@ const artOptions = [
   <USelect
     v-model="model"
     :items="artOptions"
+    :placeholder="placeholder"
     class="w-full"
   />
 </template>

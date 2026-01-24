@@ -22,7 +22,7 @@ const navItems: NavigationMenuItem[] = [
         <!-- Logo -->
         <div class="flex items-center justify-center h-16 border-b border-default">
           <NuxtLink to="/admin" class="text-xl font-bold text-highlighted">
-            WineCellar Admin
+            Weinkeller Admin
           </NuxtLink>
         </div>
 

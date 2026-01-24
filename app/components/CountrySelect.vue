@@ -38,6 +38,7 @@ export function getCountryLabel(value: string | null | undefined): string {
   <USelect
     v-model="model"
     :items="countryOptions"
+    :placeholder="placeholder"
     class="w-full"
   />
 </template>

@@ -12,6 +12,13 @@ interface WineTypeStats {
   value: number
 }
 
+interface LandStats {
+  land: string
+  count: number
+  bottles: number
+  value: number
+}
+
 interface WineStats {
   byType: {
     RED: WineTypeStats
@@ -21,6 +28,13 @@ interface WineStats {
     SPARKLING: WineTypeStats
     DESSERT: WineTypeStats
   }
+  byTaste: {
+    DRY: WineTypeStats
+    SEMI_DRY: WineTypeStats
+    SEMI_SWEET: WineTypeStats
+    SWEET: WineTypeStats
+  }
+  byLand: LandStats[]
   totals: {
     count: number
     bottles: number
@@ -39,6 +53,13 @@ const wineTypes = [
   { key: 'DESSERT', label: 'Dessertwein', icon: 'i-lucide-candy', color: 'text-amber-600', bgColor: 'bg-amber-600/10', hex: '#d97706' },
 ] as const
 
+const wineTastes = [
+  { key: 'DRY', label: 'Trocken', hex: '#3b82f6' },
+  { key: 'SEMI_DRY', label: 'Halbtrocken', hex: '#22c55e' },
+  { key: 'SEMI_SWEET', label: 'Lieblich', hex: '#a855f7' },
+  { key: 'SWEET', label: 'Süß', hex: '#ec4899' },
+] as const
+
 function formatCurrency(value: number): string {
   return new Intl.NumberFormat('de-DE', {
     style: 'currency',
@@ -49,6 +70,11 @@ function formatCurrency(value: number): string {
 function getTypeStat(key: string): WineTypeStats {
   if (!stats.value) return { count: 0, bottles: 0, value: 0 }
   return stats.value.byType[key as keyof typeof stats.value.byType]
+}
+
+function getTasteStat(key: string): WineTypeStats {
+  if (!stats.value) return { count: 0, bottles: 0, value: 0 }
+  return stats.value.byTaste[key as keyof typeof stats.value.byTaste]
 }
 
 // Pie chart computed
@@ -120,6 +146,80 @@ function handlePieHover(event: MouseEvent) {
 function handlePieLeave() {
   hoveredSegment.value = null
 }
+
+// Taste pie chart computed
+const tastePieChartStyle = computed(() => {
+  if (!stats.value || stats.value.totals.count === 0) {
+    return { background: 'var(--ui-bg-elevated)' }
+  }
+
+  const segments: string[] = []
+  let currentAngle = 0
+
+  for (const taste of wineTastes) {
+    const count = getTasteStat(taste.key).count
+    if (count === 0) continue
+
+    const percentage = (count / stats.value.totals.count) * 100
+    const endAngle = currentAngle + (percentage * 3.6)
+
+    segments.push(`${taste.hex} ${currentAngle}deg ${endAngle}deg`)
+    currentAngle = endAngle
+  }
+
+  return {
+    background: segments.length > 0
+      ? `conic-gradient(${segments.join(', ')})`
+      : 'var(--ui-bg-elevated)'
+  }
+})
+
+// Filter wine tastes with count > 0 for legend
+const activeWineTastes = computed(() => {
+  if (!stats.value) return []
+  return wineTastes.filter(t => getTasteStat(t.key).count > 0)
+})
+
+// Taste pie chart hover state
+const hoveredTasteSegment = ref<typeof wineTastes[number] | null>(null)
+const tasteTooltipPosition = ref({ x: 0, y: 0 })
+
+function handleTastePieHover(event: MouseEvent) {
+  if (!stats.value || stats.value.totals.count === 0) return
+
+  const rect = (event.currentTarget as HTMLElement).getBoundingClientRect()
+  const centerX = rect.width / 2
+  const centerY = rect.height / 2
+  const x = event.offsetX - centerX
+  const y = event.offsetY - centerY
+
+  let angle = Math.atan2(x, -y) * (180 / Math.PI)
+  if (angle < 0) angle += 360
+
+  let currentAngle = 0
+  for (const taste of wineTastes) {
+    const count = getTasteStat(taste.key).count
+    if (count === 0) continue
+
+    const segmentAngle = (count / stats.value.totals.count) * 360
+    if (angle >= currentAngle && angle < currentAngle + segmentAngle) {
+      hoveredTasteSegment.value = taste
+      tasteTooltipPosition.value = { x: event.clientX, y: event.clientY }
+      return
+    }
+    currentAngle += segmentAngle
+  }
+}
+
+function handleTastePieLeave() {
+  hoveredTasteSegment.value = null
+}
+
+// Bar chart for countries
+const maxLandCount = computed(() => {
+  if (!stats.value || stats.value.byLand.length === 0) return 1
+  return stats.value.byLand[0].count
+})
 </script>
 
 <template>
@@ -231,7 +331,7 @@ function handlePieLeave() {
             </div>
             <!-- Pie Chart -->
             <div
-              class="size-56 rounded-full cursor-crosshair"
+              class="size-56 rounded-full cursor-default"
               :style="pieChartStyle"
               @mousemove="handlePieHover"
               @mouseleave="handlePieLeave"
@@ -260,11 +360,44 @@ function handlePieLeave() {
               Weine nach Geschmack
             </h3>
           </template>
-          <div class="h-64 flex items-center justify-center text-muted">
-            <div class="text-center">
-              <UIcon name="i-lucide-pie-chart" class="size-12 mb-2 opacity-50" />
-              <p>Diagramm Platzhalter</p>
+          <div class="flex flex-col items-center gap-4 py-2">
+            <!-- Legend (horizontal, above chart) -->
+            <div class="flex flex-wrap justify-center gap-x-4 gap-y-2">
+              <UTooltip
+                v-for="taste in activeWineTastes"
+                :key="taste.key"
+                :text="`${getTasteStat(taste.key).count} Weine`"
+              >
+                <div class="flex items-center gap-1.5 cursor-default">
+                  <span
+                    class="size-2.5 rounded-full"
+                    :style="{ backgroundColor: taste.hex }"
+                  />
+                  <span class="text-sm text-muted">{{ taste.label }}</span>
+                </div>
+              </UTooltip>
             </div>
+            <!-- Pie Chart -->
+            <div
+              class="size-56 rounded-full cursor-default"
+              :style="tastePieChartStyle"
+              @mousemove="handleTastePieHover"
+              @mouseleave="handleTastePieLeave"
+            />
+            <!-- Tooltip -->
+            <Teleport to="body">
+              <div
+                v-if="hoveredTasteSegment"
+                class="fixed z-50 px-2.5 py-1.5 text-sm bg-elevated rounded-md shadow-lg border border-default pointer-events-none"
+                :style="{
+                  left: `${tasteTooltipPosition.x + 12}px`,
+                  top: `${tasteTooltipPosition.y - 12}px`
+                }"
+              >
+                <span class="font-medium text-highlighted">{{ hoveredTasteSegment.label }}:</span>
+                <span class="text-muted ml-1">{{ getTasteStat(hoveredTasteSegment.key).count }} Weine</span>
+              </div>
+            </Teleport>
           </div>
         </UCard>
 
@@ -275,10 +408,28 @@ function handlePieLeave() {
               Weine nach Land
             </h3>
           </template>
-          <div class="h-64 flex items-center justify-center text-muted">
+          <div v-if="stats.byLand.length > 0" class="py-2">
+            <div class="flex items-end gap-2 h-48">
+              <div
+                v-for="landStat in stats.byLand"
+                :key="landStat.land"
+                class="flex-1 flex flex-col items-center h-full"
+              >
+                <span class="text-xs font-medium text-highlighted mb-1">{{ landStat.count }}</span>
+                <div class="w-full flex-1 flex flex-col justify-end">
+                  <div
+                    class="w-full bg-primary rounded-t-md transition-all duration-300 min-h-1"
+                    :style="{ height: `${(landStat.count / maxLandCount) * 100}%` }"
+                  />
+                </div>
+                <span class="text-xs text-muted text-center truncate w-full mt-2">{{ landStat.land }}</span>
+              </div>
+            </div>
+          </div>
+          <div v-else class="h-64 flex items-center justify-center text-muted">
             <div class="text-center">
               <UIcon name="i-lucide-globe" class="size-12 mb-2 opacity-50" />
-              <p>Diagramm Platzhalter</p>
+              <p>Keine Daten vorhanden</p>
             </div>
           </div>
         </UCard>

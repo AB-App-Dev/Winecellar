@@ -61,7 +61,7 @@ const route = useRoute()
     <footer class="border-t border-default">
       <UContainer>
         <p class="text-center text-muted text-sm py-4">
-          &copy; {{ new Date().getFullYear() }} WineCellar
+          &copy; {{ new Date().getFullYear() }} Korkenfreunde
         </p>
       </UContainer>
     </footer>
