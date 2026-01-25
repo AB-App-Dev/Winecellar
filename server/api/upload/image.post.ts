@@ -1,6 +1,31 @@
 import { writeFile, mkdir } from 'node:fs/promises'
 import { join } from 'node:path'
 
+defineRouteMeta({
+  openAPI: {
+    tags: ['Upload'],
+    summary: 'Upload an image',
+    description: 'Uploads and stores a wine image (max 5MB, JPEG/PNG/WebP/GIF)',
+    responses: {
+      200: {
+        description: 'Upload success with file URL',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              properties: {
+                url: { type: 'string', example: '/uploads/wines/1234567890-abc123.jpg' },
+                filename: { type: 'string', example: '1234567890-abc123.jpg' }
+              }
+            }
+          }
+        }
+      },
+      400: { description: 'No file uploaded, invalid file type, or file too large' }
+    }
+  }
+})
+
 export default defineEventHandler(async (event) => {
   const formData = await readMultipartFormData(event)
 

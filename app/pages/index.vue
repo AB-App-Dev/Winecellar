@@ -9,6 +9,7 @@ definePageMeta({
 })
 
 const favoritesStore = useFavoritesStore()
+const toast = useToast()
 
 // Layout state
 const layoutView = ref<'grid' | 'list'>('grid')
@@ -65,6 +66,17 @@ function clearFilters() {
   filterCountry.value = undefined
   filterTaste.value = undefined
   fetchWines()
+}
+
+async function handleRemoveAllFavorites() {
+  const count = favoriteWines.value.length
+  await favoritesStore.removeAllFavorites()
+  toast.add({
+    title: 'Alle Favoriten entfernt',
+    description: `${count} Weine wurden aus den Favoriten entfernt.`,
+    icon: 'i-lucide-trash-2',
+    color: 'neutral',
+  })
 }
 
 // Initialization
@@ -132,13 +144,26 @@ watch(() => favoritesStore.favorites, fetchAllFavoriteWines, { deep: true })
         }]"
       >
         <template #favorites>
-          <div class="space-y-4 pt-4">
-            <GuestWineCard
-              v-for="wine in favoriteWines"
-              :key="wine.id"
-              :wine="wine"
-              view-mode="list"
-            />
+          <div class="pt-4">
+            <div class="flex justify-end mb-2">
+              <UButton
+                color="neutral"
+                variant="ghost"
+                size="sm"
+                icon="i-lucide-trash-2"
+                :ui="{ base: 'cursor-pointer' }"
+                @click="handleRemoveAllFavorites"
+              >
+                Alle entfernen
+              </UButton>
+            </div>
+            <div class="space-y-2">
+              <GuestFavoriteCard
+                v-for="wine in favoriteWines"
+                :key="wine.id"
+                :wine="wine"
+              />
+            </div>
           </div>
         </template>
       </UAccordion>

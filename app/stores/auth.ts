@@ -37,7 +37,7 @@ export const useAuthStore = defineStore('auth', () => {
     isLoading.value = true
     try {
       await signOut()
-      await navigateTo('/admin/login')
+      await navigateTo('/')
     } finally {
       isLoading.value = false
     }

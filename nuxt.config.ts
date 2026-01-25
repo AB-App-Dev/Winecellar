@@ -9,5 +9,17 @@ export default defineNuxtConfig({
       primary: 'amber',
       neutral: 'stone'
     }
+  },
+  nitro: {
+    experimental: {
+      openAPI: true
+    },
+    openAPI: {
+      meta: {
+        title: 'WineCellar API',
+        description: 'API for managing wines, wineries, suppliers, and guest favorites',
+        version: '1.0.0'
+      }
+    }
   }
 })

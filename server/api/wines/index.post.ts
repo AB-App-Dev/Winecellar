@@ -1,6 +1,37 @@
 import { prisma } from '../../utils/prisma'
 import { WineArt, WineTaste } from '../../../app/generated/prisma/client.js'
 
+defineRouteMeta({
+  openAPI: {
+    tags: ['Wines'],
+    summary: 'Create a new wine',
+    description: 'Creates a new wine entry (Admin only)',
+    responses: {
+      200: {
+        description: 'Created wine object with winery relation',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              properties: {
+                id: { type: 'string' },
+                name: { type: 'string' },
+                art: { type: 'string' },
+                taste: { type: 'string' },
+                year: { type: 'integer' },
+                land: { type: 'string' },
+                price: { type: 'number' },
+                winery: { type: 'object' }
+              }
+            }
+          }
+        }
+      },
+      400: { description: 'Validation error - missing or invalid fields' }
+    }
+  }
+})
+
 interface CreateWineBody {
   name: string
   wineryId?: string

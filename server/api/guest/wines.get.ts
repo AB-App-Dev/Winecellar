@@ -1,5 +1,40 @@
 import { prisma } from '../../utils/prisma'
 
+defineRouteMeta({
+  openAPI: {
+    tags: ['Guest'],
+    summary: 'Get wines for guests',
+    description: 'Returns wines visible to guests (hiddenForGuests=false), sorted by price ascending',
+    responses: {
+      200: {
+        description: 'Array of wine objects with winery relation',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  id: { type: 'string' },
+                  name: { type: 'string' },
+                  art: { type: 'string' },
+                  taste: { type: 'string' },
+                  year: { type: 'integer' },
+                  land: { type: 'string' },
+                  region: { type: 'string' },
+                  price: { type: 'number' },
+                  imageUrl: { type: 'string' },
+                  winery: { type: 'object' }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+})
+
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
 

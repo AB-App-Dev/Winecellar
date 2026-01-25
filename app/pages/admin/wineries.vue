@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getCountryLabel } from '~/components/CountrySelect.vue'
+import { getCountryLabel } from '~/utils/wineOptions'
 
 definePageMeta({
   layout: 'admin',

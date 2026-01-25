@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { Wine } from '~/types'
-import { getCountryLabel } from '~/components/CountrySelect.vue'
-import { getTasteLabel, getArtLabel, getWineIconColor, getCountryFlag } from '~/utils/wineOptions'
+import { getTasteLabel, getArtLabel, getWineIconColor, getCountryFlag, getCountryLabel } from '~/utils/wineOptions'
 
 const props = defineProps<{
   wine: Wine
@@ -9,6 +8,7 @@ const props = defineProps<{
 }>()
 
 const favoritesStore = useFavoritesStore()
+const toast = useToast()
 
 const isComingSoon = computed(() => {
   if (!props.wine.availableAtYear) return false
@@ -25,10 +25,17 @@ const countryFlag = computed(() => getCountryFlag(props.wine.land))
 
 async function handleToggleFavorite() {
   if (canFavorite.value) {
+    const wasFavorite = isFavorite.value
     await favoritesStore.toggleFavorite(props.wine)
+
+    toast.add({
+      title: wasFavorite ? 'Aus Favoriten entfernt' : 'Zu Favoriten hinzugefügt',
+      description: props.wine.name,
+      icon: wasFavorite ? 'i-lucide-heart-off' : 'i-lucide-heart',
+      color: wasFavorite ? 'neutral' : 'success',
+    })
   }
 }
-
 </script>
 
 <template>
@@ -66,11 +73,12 @@ async function handleToggleFavorite() {
           class="absolute top-2 right-2"
           color="neutral"
           variant="soft"
-          size="sm"
+          :ui="{ base: 'p-1.5' }"
           @click.stop="handleToggleFavorite"
         >
           <UIcon
             name="i-lucide-heart"
+            class="size-5"
             :class="isFavorite ? 'text-red-500' : ''"
           />
         </UButton>
@@ -88,21 +96,21 @@ async function handleToggleFavorite() {
         </div>
 
         <!-- Year, Art, BarrelType Badges -->
-        <div class="mt-3 flex justify-center gap-2 flex-wrap">
+        <div class="mt-4 flex justify-center gap-2 flex-wrap">
           <UBadge class="rounded-full" color="neutral" variant="subtle">{{ wine.year }}</UBadge>
           <UBadge class="rounded-full" color="neutral" variant="subtle">{{ getTasteLabel(wine.taste) }}</UBadge>
           <UBadge v-if="wine.barrelType" class="rounded-full" color="neutral" variant="subtle">{{ wine.barrelType }}</UBadge>
         </div>
 
         <!-- Coming Soon Badge -->
-        <div v-if="isComingSoon" class="mt-2 flex justify-center">
+        <div v-if="isComingSoon" class="mt-4 flex justify-center">
           <UBadge color="warning" variant="subtle">
             Verfügbar ab: {{ wine.availableAtYear }}
           </UBadge>
         </div>
 
         <!-- Wine Details -->
-        <div class="mt-3 text-sm text-muted flex flex-wrap justify-center gap-x-2 gap-y-1">
+        <div class="mt-4 text-sm text-muted flex flex-wrap justify-center gap-x-2 gap-y-1">
           <UBadge class="rounded-full" color="neutral" variant="outline">
             <template #leading>
               <UIcon name="i-lucide-wine" :class="getWineIconColor(wine.art)" />
@@ -124,17 +132,17 @@ async function handleToggleFavorite() {
         </div>
 
         <!-- Country & Region -->
-        <div class="mt-2 text-sm text-muted flex items-center justify-center gap-2">
-          <img
-            v-if="countryFlag"
-            :src="countryFlag"
-            :alt="getCountryLabel(wine.land)"
-            class="size-5 rounded-sm object-cover"
-          />
-          <template v-if="wine.region">
-            <span> · </span>
-            <span class="text-highlighted">{{ wine.region }}</span>
-          </template>
+        <div class="mt-4 text-sm text-muted flex items-center justify-center gap-2">
+          <UTooltip v-if="countryFlag" :text="getCountryLabel(wine.land)">
+            <img
+              :src="countryFlag"
+              :alt="getCountryLabel(wine.land)"
+              class="size-5 rounded-sm object-cover cursor-default"
+            />
+          </UTooltip>
+        </div>
+        <div class="mt-4 text-sm text-muted flex items-center justify-center gap-2">
+          <UBadge class="rounded-full" color="neutral" variant="subtle">{{ wine.region }}</UBadge>
         </div>
 
       </div>

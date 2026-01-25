@@ -3,6 +3,9 @@ export default defineAppConfig({
     colors: {
       primary: 'amber',
       neutral: 'stone'
+    },
+    toaster: {
+      position: 'top-center'
     }
   }
 })

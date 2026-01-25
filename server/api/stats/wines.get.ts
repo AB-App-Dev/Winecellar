@@ -1,6 +1,65 @@
 import { prisma } from '../../utils/prisma'
 import { WineArt, WineTaste } from '../../../app/generated/prisma/client.js'
 
+defineRouteMeta({
+  openAPI: {
+    tags: ['Stats'],
+    summary: 'Get wine statistics',
+    description: 'Returns aggregated statistics about wines by type, taste, and country',
+    responses: {
+      200: {
+        description: 'Wine statistics grouped by type, taste, and country',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              properties: {
+                byType: {
+                  type: 'object',
+                  description: 'Stats per wine type (RED, WHITE, ROSE, etc.)',
+                  additionalProperties: {
+                    type: 'object',
+                    properties: {
+                      count: { type: 'integer' },
+                      bottles: { type: 'integer' },
+                      value: { type: 'number' }
+                    }
+                  }
+                },
+                byTaste: {
+                  type: 'object',
+                  description: 'Stats per taste (DRY, SEMI_DRY, etc.)'
+                },
+                byLand: {
+                  type: 'array',
+                  description: 'Stats per country sorted by count',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      land: { type: 'string' },
+                      count: { type: 'integer' },
+                      bottles: { type: 'integer' },
+                      value: { type: 'number' }
+                    }
+                  }
+                },
+                totals: {
+                  type: 'object',
+                  properties: {
+                    count: { type: 'integer' },
+                    bottles: { type: 'integer' },
+                    value: { type: 'number' }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+})
+
 export default defineEventHandler(async () => {
   // Get all wines with price and bottles
   const wines = await prisma.wine.findMany({

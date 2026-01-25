@@ -1,5 +1,19 @@
 import { prisma } from '../../utils/prisma'
 
+defineRouteMeta({
+  openAPI: {
+    tags: ['Favorites'],
+    summary: 'Add wine to favorites',
+    description: 'Adds a wine to guest favorites using X-Guest-Key header',
+    responses: {
+      200: { description: 'Created favorite object with wine and winery data' },
+      400: { description: 'X-Guest-Key header or wineId is required' },
+      403: { description: 'Wine cannot be favorited (hidden or coming soon)' },
+      404: { description: 'Wine not found' }
+    }
+  }
+})
+
 export default defineEventHandler(async (event) => {
   const guestKey = getHeader(event, 'X-Guest-Key')
 

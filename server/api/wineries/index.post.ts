@@ -1,5 +1,17 @@
 import { prisma } from '../../utils/prisma'
 
+defineRouteMeta({
+  openAPI: {
+    tags: ['Wineries'],
+    summary: 'Create a new winery',
+    description: 'Creates a new winery entry',
+    responses: {
+      200: { description: 'Created winery object' },
+      400: { description: 'Validation error - invalid name, email, or website' }
+    }
+  }
+})
+
 interface CreateWineryBody {
   name: string
   address?: string

@@ -28,7 +28,10 @@
       "mcp__plugin_neon-plugin_neon__describe_table_schema",
       "mcp__plugin_neon-plugin_neon__run_sql",
       "mcp__plugin_neon-plugin_neon__run_sql_transaction",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "WebSearch",
+      "WebFetch(domain:www.better-auth.com)",
+      "WebFetch(domain:nitro.build)"
     ]
   }
 }

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Admin wines list page with CRUD operations
 // Default sorting: production year
-import { getCountryLabel } from '~/components/CountrySelect.vue'
+import { getCountryLabel } from '~/utils/wineOptions'
 
 definePageMeta({
   layout: 'admin',

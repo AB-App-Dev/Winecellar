@@ -1,6 +1,19 @@
 import { prisma } from '../../utils/prisma'
 import { WineArt, WineTaste } from '../../../app/generated/prisma/client.js'
 
+defineRouteMeta({
+  openAPI: {
+    tags: ['Wines'],
+    summary: 'Update a wine',
+    description: 'Updates an existing wine by ID',
+    responses: {
+      200: { description: 'Updated wine object with winery relation' },
+      400: { description: 'Validation error - missing or invalid fields' },
+      404: { description: 'Wine not found' }
+    }
+  }
+})
+
 interface UpdateWineBody {
   name: string
   wineryId?: string

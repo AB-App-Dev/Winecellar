@@ -130,6 +130,28 @@ export const useFavoritesStore = defineStore('favorites', {
       } else {
         await this.addFavorite(wine.id)
       }
+    },
+
+    async removeAllFavorites() {
+      if (!this.guestKey) return
+
+      const removedFavorites = [...this.favorites]
+      this.favorites = []
+
+      try {
+        await Promise.all(
+          removedFavorites.map(f =>
+            $fetch(`/api/favorites/${f.wineId}`, {
+              method: 'DELETE',
+              headers: { 'X-Guest-Key': this.guestKey! }
+            })
+          )
+        )
+      } catch (e) {
+        this.favorites = removedFavorites
+        this.error = 'Failed to remove all favorites'
+        console.error('Failed to remove all favorites:', e)
+      }
     }
   }
 })

@@ -1,5 +1,18 @@
 import { prisma } from '../../utils/prisma'
 
+defineRouteMeta({
+  openAPI: {
+    tags: ['Suppliers'],
+    summary: 'Delete a supplier',
+    description: 'Deletes a supplier by ID',
+    responses: {
+      200: { description: 'Success confirmation { success: true }' },
+      400: { description: 'Invalid supplier ID' },
+      404: { description: 'Supplier not found' }
+    }
+  }
+})
+
 export default defineEventHandler(async (event) => {
   const id = getRouterParam(event, 'id')
 

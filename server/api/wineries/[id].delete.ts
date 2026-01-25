@@ -1,5 +1,18 @@
 import { prisma } from '../../utils/prisma'
 
+defineRouteMeta({
+  openAPI: {
+    tags: ['Wineries'],
+    summary: 'Delete a winery',
+    description: 'Deletes a winery by ID (fails if winery has wines)',
+    responses: {
+      200: { description: 'Success confirmation { success: true }' },
+      400: { description: 'Cannot delete - winery still has wines' },
+      404: { description: 'Winery not found' }
+    }
+  }
+})
+
 export default defineEventHandler(async (event) => {
   const id = getRouterParam(event, 'id')
 

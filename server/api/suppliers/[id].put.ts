@@ -1,5 +1,18 @@
 import { prisma } from '../../utils/prisma'
 
+defineRouteMeta({
+  openAPI: {
+    tags: ['Suppliers'],
+    summary: 'Update a supplier',
+    description: 'Updates an existing supplier by ID',
+    responses: {
+      200: { description: 'Updated supplier object' },
+      400: { description: 'Validation error - invalid name, email, or website' },
+      404: { description: 'Supplier not found' }
+    }
+  }
+})
+
 interface UpdateSupplierBody {
   name?: string
   address?: string

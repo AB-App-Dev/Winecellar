@@ -43,26 +43,35 @@ export function getWineIconColor(art: string): string {
   }
 }
 
+// Unified country options: single source of truth
+export const countryOptions = [
+  { value: 'AT_ST', label: 'Österreich - Steiermark', flag: '/flags/austria.png' },
+  { value: 'AT_BU', label: 'Österreich - Burgenland', flag: '/flags/austria.png' },
+  { value: 'AT_NO', label: 'Österreich - Niederösterreich', flag: '/flags/austria.png' },
+  { value: 'IT', label: 'Italien', flag: '/flags/italy.png' },
+  { value: 'ES', label: 'Spanien', flag: '/flags/spain.png' },
+  { value: 'FR', label: 'Frankreich', flag: '/flags/france.png' },
+  { value: 'PT', label: 'Portugal', flag: '/flags/portugal.png' },
+  { value: 'SI', label: 'Slowenien', flag: '/flags/slovenia.png' },
+  { value: 'HR', label: 'Kroatien', flag: '/flags/croatia.png' },
+  { value: 'RS', label: 'Serbien', flag: '/flags/serbia.png' },
+  { value: 'AR', label: 'Argentinien', flag: '/flags/argentina.png' },
+  { value: 'AU', label: 'Australien', flag: '/flags/australia.png' },
+  { value: 'US', label: 'USA', flag: '/flags/usa.png' },
+  { value: 'MX', label: 'Mexiko', flag: '/flags/mexico.png' },
+  { value: 'CL', label: 'Chile', flag: '/flags/chile.png' },
+  { value: 'ZA', label: 'Südafrika', flag: '/flags/south_africa.png' },
+  { value: 'DE', label: 'Deutschland', flag: '/flags/germany.png' },
+]
+
+export function getCountryLabel(value: string | null | undefined): string {
+  if (!value) return '-'
+  const option = countryOptions.find(o => o.value === value)
+  return option?.label || value
+}
+
 export function getCountryFlag(value: string | null | undefined): string | null {
   if (!value) return null
-  const flagMap: Record<string, string> = {
-    '0': '/flags/austria.png',
-    '1': '/flags/austria.png',
-    '2': '/flags/austria.png',
-    '3': '/flags/italy.png',
-    '4': '/flags/spain.png',
-    '5': '/flags/france.png',
-    '6': '/flags/portugal.png',
-    '7': '/flags/slovenia.png',
-    '8': '/flags/croatia.png',
-    '9': '/flags/serbia.png',
-    '10': '/flags/argentina.png',
-    '11': '/flags/australia.png',
-    '12': '/flags/usa.png',
-    '13': '/flags/mexico.png',
-    '14': '/flags/chile.png',
-    '15': '/flags/south_africa.png',
-    '16': '/flags/germany.png',
-  }
-  return flagMap[value] || null
+  const option = countryOptions.find(o => o.value === value)
+  return option?.flag || null
 }
