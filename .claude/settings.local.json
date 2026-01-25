@@ -35,7 +35,8 @@
       "mcp__plugin_neon-plugin_neon__get_connection_string",
       "Bash(npx prisma:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git push)"
     ]
   }
 }
