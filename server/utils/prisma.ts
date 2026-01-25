@@ -1,4 +1,4 @@
-import { PrismaClient } from '../../app/generated/prisma/client.js'
+import { PrismaClient, WineArt, WineTaste } from '../../app/generated/prisma/client.js'
 import { PrismaPg } from '@prisma/adapter-pg'
 import pg from 'pg'
 
@@ -11,3 +11,4 @@ const pool = new Pool({
 const adapter = new PrismaPg(pool)
 
 export const prisma = new PrismaClient({ adapter })
+export { PrismaClient, WineArt, WineTaste }

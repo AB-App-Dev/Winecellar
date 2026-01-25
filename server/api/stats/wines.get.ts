@@ -1,5 +1,4 @@
-import { prisma } from '../../utils/prisma'
-import { WineArt, WineTaste } from '../../../app/generated/prisma/client.js'
+import { prisma, WineArt, WineTaste } from '../../utils/prisma'
 
 defineRouteMeta({
   openAPI: {

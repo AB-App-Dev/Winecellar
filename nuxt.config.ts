@@ -9,12 +9,6 @@ export default defineNuxtConfig({
       sourcemap: false
     }
   },
-  ui: {
-    colors: {
-      primary: 'amber',
-      neutral: 'stone'
-    }
-  },
   nitro: {
     experimental: {
       openAPI: true
