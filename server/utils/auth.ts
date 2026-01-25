@@ -58,10 +58,6 @@ function getAuth() {
   return authInstance
 }
 
-export const auth = new Proxy({} as ReturnType<typeof betterAuth>, {
-  get(_target, prop) {
-    return getAuth()[prop as keyof ReturnType<typeof betterAuth>]
-  }
-})
+export { getAuth as auth }
 
 export type Session = ReturnType<typeof getAuth>['$Infer']['Session']
