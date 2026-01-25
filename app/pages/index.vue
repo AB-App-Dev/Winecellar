@@ -127,9 +127,32 @@ watch(() => favoritesStore.favorites, fetchAllFavoriteWines, { deep: true })
       </div>
     </UCard>
 
-    <!-- Loading State -->
-    <div v-if="isLoading" class="flex items-center justify-center py-12">
-      <UIcon name="i-lucide-loader-2" class="size-8 animate-spin text-muted" />
+    <!-- Skeleton Loading State -->
+    <div v-if="isLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <UCard v-for="i in 8" :key="i" class="overflow-hidden">
+        <USkeleton class="aspect-square w-full" />
+        <div class="p-4 space-y-4">
+          <div class="text-center space-y-2">
+            <USkeleton class="h-5 w-3/4 mx-auto" />
+            <USkeleton class="h-4 w-1/2 mx-auto" />
+          </div>
+          <div class="flex justify-center gap-2">
+            <USkeleton class="h-6 w-16 rounded-full" />
+            <USkeleton class="h-6 w-16 rounded-full" />
+            <USkeleton class="h-6 w-16 rounded-full" />
+          </div>
+          <div class="flex justify-center gap-2">
+            <USkeleton class="h-6 w-20 rounded-full" />
+            <USkeleton class="h-6 w-14 rounded-full" />
+          </div>
+          <div class="flex justify-center">
+            <USkeleton class="h-5 w-5 rounded-sm" />
+          </div>
+          <div class="flex justify-center">
+            <USkeleton class="h-6 w-24 rounded-full" />
+          </div>
+        </div>
+      </UCard>
     </div>
 
     <template v-else>

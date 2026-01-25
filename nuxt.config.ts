@@ -21,9 +21,5 @@ export default defineNuxtConfig({
         version: '1.0.0'
       }
     }
-  },
-  sourcemap: {
-    server: false,
-    client: false
   }
 })
