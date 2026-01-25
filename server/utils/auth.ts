@@ -6,55 +6,61 @@ import pg from 'pg'
 
 const { Pool } = pg
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-})
+let authInstance: ReturnType<typeof betterAuth> | null = null
 
-const adapter = new PrismaPg(pool)
-const prisma = new PrismaClient({ adapter })
+function createPrismaClient() {
+  const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+  })
+  const adapter = new PrismaPg(pool)
+  return new PrismaClient({ adapter })
+}
 
-export const auth = betterAuth({
-  database: prismaAdapter(prisma, {
-    provider: 'postgresql',
-  }),
-  advanced: {
-    defaultLocale: 'de',
-  },
-  emailAndPassword: {
-    enabled: true,
-    autoSignIn: true,
-    sendResetPassword: async ({ user, url }) => {
-      // TODO: Integrate with email service (e.g., Resend, SendGrid, Nodemailer)
-      // For now, log the reset URL to console for development
-      console.log(`[Password Reset] User: ${user.email}`)
-      console.log(`[Password Reset] Reset URL: ${url}`)
-
-      // In production, send email like:
-      // await sendEmail({
-      //   to: user.email,
-      //   subject: 'Reset your password',
-      //   html: `<a href="${url}">Click here to reset your password</a>`
-      // })
-    },
-  },
-  session: {
-    expiresIn: 60 * 60 * 24 * 7, // 7 days
-    updateAge: 60 * 60 * 24, // 1 day
-    cookieCache: {
-      enabled: true,
-      maxAge: 5 * 60, // 5 minutes
-    },
-  },
-  user: {
-    additionalFields: {
-      role: {
-        type: 'string',
-        required: false,
-        defaultValue: 'admin',
-        input: false,
+function getAuth() {
+  if (!authInstance) {
+    const prisma = createPrismaClient()
+    authInstance = betterAuth({
+      database: prismaAdapter(prisma, {
+        provider: 'postgresql',
+      }),
+      advanced: {
+        defaultLocale: 'de',
       },
-    },
-  },
+      emailAndPassword: {
+        enabled: true,
+        autoSignIn: true,
+        sendResetPassword: async ({ user, url }) => {
+          console.log(`[Password Reset] User: ${user.email}`)
+          console.log(`[Password Reset] Reset URL: ${url}`)
+        },
+      },
+      session: {
+        expiresIn: 60 * 60 * 24 * 7, // 7 days
+        updateAge: 60 * 60 * 24, // 1 day
+        cookieCache: {
+          enabled: true,
+          maxAge: 5 * 60, // 5 minutes
+        },
+      },
+      user: {
+        additionalFields: {
+          role: {
+            type: 'string',
+            required: false,
+            defaultValue: 'admin',
+            input: false,
+          },
+        },
+      },
+    })
+  }
+  return authInstance
+}
+
+export const auth = new Proxy({} as ReturnType<typeof betterAuth>, {
+  get(_target, prop) {
+    return getAuth()[prop as keyof ReturnType<typeof betterAuth>]
+  }
 })
 
-export type Session = typeof auth.$Infer.Session
+export type Session = ReturnType<typeof getAuth>['$Infer']['Session']
