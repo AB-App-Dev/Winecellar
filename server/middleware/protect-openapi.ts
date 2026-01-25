@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Check session using better-auth's API
-  const session = await auth.api.getSession({
+  const session = await auth().api.getSession({
     headers: event.headers,
   })
 
