@@ -20,6 +20,7 @@ function getAuth() {
   if (!authInstance) {
     const prisma = createPrismaClient()
     authInstance = betterAuth({
+      secret: process.env.BETTER_AUTH_SECRET,
       baseURL: process.env.BETTER_AUTH_URL || process.env.NUXT_PUBLIC_SITE_URL,
       database: prismaAdapter(prisma, {
         provider: 'postgresql',
