@@ -4,6 +4,11 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ['@nuxt/ui', '@pinia/nuxt'],
   css: ['~/assets/css/main.css'],
+  vite: {
+    build: {
+      sourcemap: false
+    }
+  },
   ui: {
     colors: {
       primary: 'amber',
