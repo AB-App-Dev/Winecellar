@@ -52,7 +52,7 @@ async function handleToggleFavorite() {
       <!-- Wine Image with Favorite Button Overlay -->
       <div
         class="relative aspect-square"
-        :class="viewMode === 'list' ? 'w-32 flex-shrink-0' : ''"
+        :class="viewMode === 'list' ? 'w-[150px] h-[150px] shrink-0' : ''"
       >
         <img
           v-if="wine.imageUrl"
@@ -85,8 +85,12 @@ async function handleToggleFavorite() {
       </div>
 
       <!-- Wine Info -->
-      <div class="p-4 flex-1">
-        <div class="text-center">
+      <div
+        class="p-4 flex-1"
+        :class="viewMode === 'list' ? 'flex items-center gap-4 flex-wrap' : ''"
+      >
+        <!-- Name & Winery -->
+        <div :class="viewMode === 'list' ? '' : 'text-center'">
           <h3 class="text-lg font-semibold text-highlighted">
             {{ wine.name }}
           </h3>
@@ -95,22 +99,22 @@ async function handleToggleFavorite() {
           </p>
         </div>
 
-        <!-- Year, Art, BarrelType Badges -->
-        <div class="mt-4 flex justify-center gap-2 flex-wrap">
+        <!-- Year, Taste, BarrelType Badges -->
+        <div :class="viewMode === 'list' ? 'flex gap-2' : 'mt-4 flex justify-center gap-2 flex-wrap'">
           <UBadge class="rounded-full" color="neutral" variant="subtle">{{ wine.year }}</UBadge>
           <UBadge class="rounded-full" color="neutral" variant="subtle">{{ getTasteLabel(wine.taste) }}</UBadge>
           <UBadge v-if="wine.barrelType" class="rounded-full" color="neutral" variant="subtle">{{ wine.barrelType }}</UBadge>
         </div>
 
         <!-- Coming Soon Badge -->
-        <div v-if="isComingSoon" class="mt-4 flex justify-center">
+        <div v-if="isComingSoon" :class="viewMode === 'list' ? 'flex' : 'mt-4 flex justify-center'">
           <UBadge color="warning" variant="subtle">
             Verfügbar ab: {{ wine.availableAtYear }}
           </UBadge>
         </div>
 
         <!-- Wine Details -->
-        <div class="mt-4 text-sm text-muted flex flex-wrap justify-center gap-x-2 gap-y-1">
+        <div :class="viewMode === 'list' ? 'flex gap-2 text-sm text-muted' : 'mt-4 text-sm text-muted flex flex-wrap justify-center gap-x-2 gap-y-1'">
           <UBadge class="rounded-full" color="neutral" variant="outline">
             <template #leading>
               <UIcon name="i-lucide-wine" :class="getWineIconColor(wine.art)" />
@@ -131,9 +135,9 @@ async function handleToggleFavorite() {
           </UBadge>
         </div>
 
-        <!-- Country & Region -->
-        <div class="mt-4 text-sm text-muted flex items-center justify-center gap-2">
-          <UTooltip v-if="countryFlag" :text="getCountryLabel(wine.land)">
+        <!-- Country Flag -->
+        <div v-if="countryFlag" :class="viewMode === 'list' ? 'flex items-center' : 'mt-4 text-sm text-muted flex items-center justify-center gap-2'">
+          <UTooltip :text="getCountryLabel(wine.land)">
             <img
               :src="countryFlag"
               :alt="getCountryLabel(wine.land)"
@@ -141,7 +145,9 @@ async function handleToggleFavorite() {
             />
           </UTooltip>
         </div>
-        <div class="mt-4 text-sm text-muted flex items-center justify-center gap-2">
+
+        <!-- Region -->
+        <div :class="viewMode === 'list' ? 'flex items-center' : 'mt-4 text-sm text-muted flex items-center justify-center gap-2'">
           <UBadge class="rounded-full" color="neutral" variant="subtle">{{ wine.region }}</UBadge>
         </div>
 
