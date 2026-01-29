@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { forgetPassword } from '~/utils/auth-client'
+import { translateAuthError } from '~/utils/auth-errors'
 
 // Admin forgot password page
 
@@ -23,12 +24,12 @@ async function handleSubmit() {
     })
 
     if (resetError) {
-      error.value = resetError.message || 'An error occurred. Please try again.'
+      error.value = translateAuthError(resetError)
     } else {
       isSubmitted.value = true
     }
   } catch (e: any) {
-    error.value = e.message || 'An error occurred. Please try again.'
+    error.value = e.message || 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.'
   } finally {
     isSubmitting.value = false
   }
@@ -41,10 +42,10 @@ async function handleSubmit() {
       <template #header>
         <div class="text-center">
           <h2 class="text-3xl font-bold text-highlighted">
-            Reset Password
+            Passwort zurücksetzen
           </h2>
           <p class="mt-2 text-sm text-muted">
-            Enter your email address and we'll send you a link to reset your password.
+            Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen einen Link zum Zurücksetzen Ihres Passworts.
           </p>
         </div>
       </template>
@@ -53,7 +54,7 @@ async function handleSubmit() {
         <UAlert
           color="success"
           variant="subtle"
-          title="If an account exists with that email, you will receive a password reset link shortly."
+          title="Falls ein Konto mit dieser E-Mail-Adresse existiert, erhalten Sie in Kürze einen Link zum Zurücksetzen des Passworts."
           icon="i-lucide-circle-check"
         />
         <NuxtLink
@@ -61,7 +62,7 @@ async function handleSubmit() {
           class="text-sm text-primary hover:text-primary-600 inline-flex items-center gap-1"
         >
           <UIcon name="i-lucide-arrow-left" />
-          Back to login
+          Zurück zur Anmeldung
         </NuxtLink>
       </div>
 
@@ -74,11 +75,11 @@ async function handleSubmit() {
           icon="i-lucide-circle-x"
         />
 
-        <UFormField label="Email address" class="w-full">
+        <UFormField label="E-Mail-Adresse" class="w-full">
           <UInput
             v-model="email"
             type="email"
-            placeholder="Enter your email"
+            placeholder="E-Mail-Adresse eingeben"
             icon="i-lucide-mail"
             required
             class="w-full"
@@ -92,7 +93,7 @@ async function handleSubmit() {
           :loading="isSubmitting"
           :ui="{ base: 'cursor-pointer' }"
         >
-          {{ isSubmitting ? 'Sending...' : 'Send reset link' }}
+          {{ isSubmitting ? 'Wird gesendet...' : 'Link senden' }}
         </UButton>
       </form>
 
@@ -100,7 +101,7 @@ async function handleSubmit() {
         <div class="text-center">
           <NuxtLink to="/admin/login" class="text-sm text-primary hover:text-primary-600 inline-flex items-center gap-1">
             <UIcon name="i-lucide-arrow-left" />
-            Back to login
+            Zurück zur Anmeldung
           </NuxtLink>
         </div>
       </template>

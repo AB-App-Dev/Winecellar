@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { countryOptions } from '~/utils/wineOptions'
+
 // Admin Dashboard page
 
 definePageMeta({
@@ -220,6 +222,17 @@ const maxLandCount = computed(() => {
   if (!stats.value || stats.value.byLand.length === 0) return 1
   return stats.value.byLand[0].count
 })
+
+// Get short country/region label for chart display
+function getCountryName(code: string): string {
+  const option = countryOptions.find(o => o.value === code)
+  if (!option) return code
+  // For Austrian regions, show just the region name
+  if (option.label.includes(' - ')) {
+    return option.label.split(' - ')[1]
+  }
+  return option.label
+}
 </script>
 
 <template>
@@ -422,7 +435,7 @@ const maxLandCount = computed(() => {
                     :style="{ height: `${(landStat.count / maxLandCount) * 100}%` }"
                   />
                 </div>
-                <span class="text-xs text-muted text-center truncate w-full mt-2">{{ landStat.land }}</span>
+                <span class="text-xs text-muted text-center truncate w-full mt-2">{{ getCountryName(landStat.land) }}</span>
               </div>
             </div>
           </div>

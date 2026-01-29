@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { signIn, signOut, useSession } from '~/utils/auth-client'
+import { translateAuthError } from '~/utils/auth-errors'
 
 export const useAuthStore = defineStore('auth', () => {
   const session = useSession()
@@ -19,13 +20,13 @@ export const useAuthStore = defineStore('auth', () => {
         password,
       })
       if (result.error) {
-        error.value = result.error.message ?? 'Invalid credentials'
+        error.value = translateAuthError(result.error)
         throw new Error(error.value)
       }
       await navigateTo('/admin')
     } catch (e) {
       if (!error.value) {
-        error.value = 'Invalid credentials'
+        error.value = 'Ungültige Anmeldedaten'
       }
       throw e
     } finally {

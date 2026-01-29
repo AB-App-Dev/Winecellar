@@ -28,7 +28,7 @@ async function handleLogin() {
             WineCellar Admin
           </h2>
           <p class="mt-2 text-sm text-muted">
-            Sign in to access the admin panel
+            Melden Sie sich an, um auf den Admin-Bereich zuzugreifen
           </p>
         </div>
       </template>
@@ -42,22 +42,22 @@ async function handleLogin() {
           icon="i-lucide-circle-x"
         />
 
-        <UFormField label="Email" class="w-full">
+        <UFormField label="E-Mail" class="w-full">
           <UInput
             v-model="email"
             type="email"
-            placeholder="Enter your email"
+            placeholder="E-Mail-Adresse eingeben"
             icon="i-lucide-mail"
             required
             class="w-full"
           />
         </UFormField>
 
-        <UFormField label="Password" class="w-full">
+        <UFormField label="Passwort" class="w-full">
           <UInput
             v-model="password"
             type="password"
-            placeholder="Enter your password"
+            placeholder="Passwort eingeben"
             icon="i-lucide-lock"
             required
             class="w-full"
@@ -67,7 +67,7 @@ async function handleLogin() {
               to="/admin/forgot-password"
               class="text-sm text-primary hover:text-primary-600"
             >
-              Forgot password?
+              Passwort vergessen?
             </NuxtLink>
           </template>
         </UFormField>
@@ -79,7 +79,7 @@ async function handleLogin() {
           :loading="authStore.isLoading"
           :ui="{ base: 'cursor-pointer' }"
         >
-          {{ authStore.isLoading ? 'Signing in...' : 'Sign in' }}
+          {{ authStore.isLoading ? 'Anmeldung...' : 'Anmelden' }}
         </UButton>
       </form>
 
@@ -87,7 +87,7 @@ async function handleLogin() {
         <div class="text-center">
           <NuxtLink to="/" class="text-sm text-primary hover:text-primary-600 inline-flex items-center gap-1">
             <UIcon name="i-lucide-arrow-left" />
-            Back to wine list
+            Zurück zur Weinkarte
           </NuxtLink>
         </div>
       </template>
